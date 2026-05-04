@@ -114,7 +114,48 @@ export default function App() {
       <main id="main-content">
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-32 pb-20 md:pt-48 md:pb-32 bg-white">
-          <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none mask-radial" aria-hidden="true"></div>
+          {/* New Dynamic Background */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <div className="absolute inset-0 grid-pattern opacity-30 mask-radial"></div>
+            
+            {/* Thick Transversal Blurred Lines (Speed Elements) - More visible and dynamic */}
+            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+              <motion.div 
+                animate={{ 
+                  x: [-20, 20],
+                  opacity: [0.08, 0.12, 0.08]
+                }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-0 -rotate-12 scale-150"
+              >
+                <div className="absolute top-0 left-1/4 w-48 h-full bg-[var(--primary)] blur-[100px]"></div>
+                <div className="absolute top-0 left-1/2 w-96 h-full bg-[var(--primary)] blur-[120px]"></div>
+                <div className="absolute top-0 left-3/4 w-40 h-full bg-[var(--primary)] blur-[80px]"></div>
+              </motion.div>
+            </div>
+
+            {/* Abstract Decorative Shapes */}
+            <motion.div 
+              animate={{ 
+                rotate: 360,
+                scale: [1, 1.05, 1],
+              }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] border border-[var(--primary)]/5 rounded-[30%_70%_70%_30%/30%_30%_70%_70%] opacity-40"
+            />
+            
+            <motion.div 
+              animate={{ 
+                rotate: -360,
+                scale: [1, 1.1, 1],
+              }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] border border-[var(--primary)]/10 rounded-[50%_50%_20%_80%/25%_80%_20%_75%] opacity-30"
+            />
+
+            {/* Glowing Accent */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full"></div>
+          </div>
           
           <div className="container relative z-10 max-w-4xl">
             {/* Floating Elements */}
@@ -300,15 +341,17 @@ export default function App() {
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
                  transition={{ delay: 0.1 }}
-                className="md:col-span-6 lg:col-span-4 bg-[var(--inverse-surface)] p-8 rounded-[32px] text-white flex flex-col justify-between group overflow-hidden relative shadow-sm"
+                className="md:col-span-6 lg:col-span-4 bg-white p-8 rounded-[32px] border border-[var(--surface-container-high)] flex flex-col justify-between group overflow-hidden relative shadow-sm"
               >
                 <div className="relative z-10">
-                  <Smartphone size={32} className="text-[var(--primary)] mb-8 transition-transform group-hover:scale-110" />
-                  <h3 className="text-2xl font-bold mb-4">Mobile First</h3>
-                  <p className="text-white/60 leading-relaxed">El 90% de tus clientes te buscarán desde el móvil. Optimizamos esa experiencia primero.</p>
+                  <div className="w-14 h-14 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[var(--primary)] transition-colors">
+                    <Smartphone size={28} className="text-[var(--primary)] group-hover:text-white transition-colors" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4">Diseño Móvil Primero</h3>
+                  <p className="text-[var(--secondary)] leading-relaxed">El 80% de tus clientes te buscarán desde su smartphone. Optimizamos cada píxel para esa experiencia.</p>
                 </div>
                 <div className="mt-8">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Tu negocio en sus manos</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Adaptabilidad Total</span>
                 </div>
               </motion.div>
 
