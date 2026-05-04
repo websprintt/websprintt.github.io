@@ -300,12 +300,15 @@ export default function App() {
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
                  transition={{ delay: 0.1 }}
-                className="md:col-span-6 lg:col-span-4 bg-[var(--inverse-surface)] p-8 rounded-[32px] text-white flex flex-col justify-between"
+                className="md:col-span-6 lg:col-span-4 bg-[var(--inverse-surface)] p-8 rounded-[32px] text-white flex flex-col justify-between group overflow-hidden relative shadow-sm"
               >
-                <Smartphone size={32} className="text-[var(--primary)] mb-8" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Mobile First</h3>
-                  <p className="text-white/60 text-sm">El 90% de tus clientes te buscarán desde el móvil. Optimizamos esa experiencia primero.</p>
+                <div className="relative z-10">
+                  <Smartphone size={32} className="text-[var(--primary)] mb-8 transition-transform group-hover:scale-110" />
+                  <h3 className="text-2xl font-bold mb-4">Mobile First</h3>
+                  <p className="text-white/60 leading-relaxed">El 90% de tus clientes te buscarán desde el móvil. Optimizamos esa experiencia primero.</p>
+                </div>
+                <div className="mt-8">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Tu negocio en sus manos</span>
                 </div>
               </motion.div>
 
