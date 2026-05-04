@@ -22,6 +22,14 @@ export default function App() {
   });
 
   const logoUrl = "https://raw.githubusercontent.com/websprintt/websprintt.github.io/e7fc2c370ab1c9abfa7933ea04e7f4683121fb86/im%C3%A1genes/Logo_sin-fondo_.webp";
+  
+  // Ofuscación básica para evitar scraping de bots
+  const encodedPhone = "MzQ3NDIwOTA5OTE="; // Base64 de 34742090991
+  const getWaLink = (message?: string) => {
+    const phone = atob(encodedPhone);
+    const base = `https://wa.me/${phone}`;
+    return message ? `${base}?text=${encodeURIComponent(message)}` : base;
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,19 +66,19 @@ export default function App() {
 
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border-b border-[var(--surface-container-high)] py-2 shadow-md' : 'bg-transparent py-4'}`}>
-        <div className={`container flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-16' : 'h-40'}`}>
+        <div className={`container px-6 sm:px-8 flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-16' : 'h-40'}`}>
           <a href="#" className="flex items-center transition-transform hover:scale-105">
             <img src={logoUrl} alt="Websprint Logo" className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-12' : 'h-32'}`} />
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6">
             <ul className="flex items-center gap-1">
               <li><a href="#servicios" className="nav-link">Servicios</a></li>
               <li><a href="#proceso" className="nav-link">Proceso</a></li>
               <li><a href="#precios" className="nav-link">Precios</a></li>
             </ul>
-            <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="btn btn-primary !h-11 !px-5 !text-xs !tracking-widest uppercase">
+            <a href={getWaLink("Hola Websprint! Vengo de vuestra web y me gustaría recibir información.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary !h-11 !px-5 !text-xs !tracking-widest uppercase">
               Contacto
             </a>
           </nav>
@@ -102,7 +110,7 @@ export default function App() {
                 <li><a href="#precios" onClick={() => setIsMenuOpen(false)} className="nav-link w-full">Precios</a></li>
               </ul>
               <div className="mt-6 pt-6 border-t border-[var(--surface-container-high)]">
-                <a href="https://wa.me/34742090991" className="btn btn-primary w-full">
+                <a href={getWaLink("Hola! Me gustaría informarme sobre vuestros servicios desde el menú móvil.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
                   Contacto por WhatsApp
                 </a>
               </div>
@@ -183,7 +191,7 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-display text-4xl sm:text-6xl md:text-7xl font-bold leading-[1.1] tracking-tight mb-6"
+              className="font-display text-[2.75rem] sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6"
             >
               Consigue más clientes con una web en <span className="text-[var(--primary)]">48 horas</span>
             </motion.h1>
@@ -192,7 +200,7 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-lg md:text-xl text-[var(--secondary)] leading-relaxed mb-10 max-w-2xl"
+              className="text-lg md:text-xl text-[var(--secondary)] leading-relaxed mb-10 max-w-2xl px-2 sm:px-0"
             >
               Creamos páginas web simples, rápidas y optimizadas para que tu negocio empiece a captar clientes desde el primer minuto. Sin fricción, sin esperas.
             </motion.p>
@@ -201,13 +209,13 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0"
             >
-              <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine group !h-14 !px-8 text-lg">
+              <a href={getWaLink("¡Hola! Quiero activar mi proyecto web de 48h ahora mismo. ¿Cómo empezamos?")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine group h-16 sm:h-14 !px-8 text-lg w-full sm:w-auto">
                 Activar mi proyecto ahora
                 <Zap className="transition-transform group-hover:scale-125" size={20} fill="currentColor" />
               </a>
-              <a href="#proceso" className="btn btn-outline !h-14 !px-8 text-lg">
+              <a href="#proceso" className="btn btn-outline h-16 sm:h-14 !px-8 text-lg w-full sm:w-auto">
                 Ver método
               </a>
             </motion.div>
@@ -235,7 +243,7 @@ export default function App() {
 
         {/* Problem Section */}
         <section className="section bg-white border-y border-[var(--surface-container-high)]">
-          <div className="container grid md:grid-cols-2 gap-16 items-center">
+          <div className="container px-6 sm:px-8 grid md:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -292,7 +300,7 @@ export default function App() {
                 ))}
               </ul>
 
-              <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full shadow-lg">
+              <a href={getWaLink("Hola, he visto vuestra web y me gustaría profesionalizar mi negocio para no perder más clientes.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full shadow-lg">
                 Cambiar esto hoy mismo
               </a>
             </motion.div>
@@ -301,7 +309,7 @@ export default function App() {
 
         {/* Features Section (Bento Grid Style) */}
         <section id="servicios" className="section bg-[var(--surface-container-low)]">
-          <div className="container">
+          <div className="container px-6 sm:px-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -380,7 +388,7 @@ export default function App() {
 
         {/* Process Section */}
         <section id="proceso" className="section bg-white overflow-hidden">
-          <div className="container relative">
+          <div className="container px-6 sm:px-8 relative">
             <div className="max-w-2xl mb-24">
               <span className="text-[var(--primary)] font-bold tracking-[0.2em] uppercase text-[10px] mb-4 block">Hoja de ruta</span>
               <h2 className="headline-lg mb-6">Tu negocio en línea, <span className="text-[var(--primary)]">paso a paso.</span></h2>
@@ -499,7 +507,7 @@ export default function App() {
                 ))}
               </ul>
 
-              <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine w-full !h-16 text-lg group">
+              <a href={getWaLink("¡Hola! Estoy interesado en contratar el servicio web de Websprint. ¿Qué pasos debo seguir?")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine w-full !h-16 text-lg group">
                 Reservar mi turno ahora
                 <ChevronRight className="transition-transform group-hover:translate-x-2" size={20} />
               </a>
@@ -525,7 +533,7 @@ export default function App() {
               <p className="body-lg text-[var(--secondary)] mb-12 max-w-xl mx-auto">La velocidad es una ventaja competitiva. Mientras lo piensas, tu competencia ya está pidiendo su presupuesto.</p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine !h-16 !px-12 text-lg group">
+                <a href={getWaLink("¡Hola! Quiero hablar con un experto de Websprint sobre mi nueva página web.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine !h-16 !px-12 text-lg group">
                   <Zap size={24} fill="currentColor" className="mr-3" />
                   Hablar con un experto ahora
                 </a>
@@ -591,7 +599,9 @@ export default function App() {
               <ul className="space-y-4 text-sm">
                 <li className="flex items-center gap-3">
                   <MessageSquare size={16} className="text-[var(--primary)]" />
-                  <a href="https://wa.me/34742090991" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">34 742 090 991</a>
+                  <a href={getWaLink("Hola! Contacto desde el pie de página de la web. ¿Me podéis informar?")} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                    {atob(encodedPhone).replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4")}
+                  </a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Zap size={16} className="text-[var(--primary)]" />
@@ -606,7 +616,7 @@ export default function App() {
           </div>
           
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p className="text-xs">© 2024 Websprint. Todos los derechos reservados. Diseño y ejecución a máxima velocidad.</p>
+            <p className="text-xs">© 2026 Websprint. Todos los derechos reservados. Diseño y ejecución a máxima velocidad.</p>
             <div className="flex gap-6 text-[10px] uppercase font-bold tracking-widest opacity-40">
               <span>Hecho con <Zap size={10} className="inline mb-0.5" fill="currentColor"/> en 48h</span>
             </div>
@@ -616,7 +626,7 @@ export default function App() {
 
       {/* Floating WhatsApp */}
       <a 
-        href="https://wa.me/34742090991" 
+        href={getWaLink("Hola! Tengo una duda sobre vuestros servicios de diseño web express.")} 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl z-[100] hover:scale-110 transition-transform active:scale-95"
