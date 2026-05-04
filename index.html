@@ -8,7 +8,7 @@
     <meta name="robots" content="index, follow">
     
     <!-- Content Security Policy para GitHub Pages -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://wa.me; frame-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' ; connect-src 'self' https://wa.me; frame-src 'none';">
     
     <title>Websprint — Web Express para Negocios</title>
     
@@ -129,8 +129,7 @@
         .header { position: sticky; top: 0; z-index: 1000; background: rgba(249, 249, 249, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--surface-container-high); }
         .header__inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
         .header__logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--on-surface); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .header__logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
-        .header__logo-icon svg { width: 16px; height: 16px; fill: var(--on-primary); }
+        .header__logo-img { width: 32px; height: 32px; object-fit: contain; }
         .nav { display: flex; align-items: center; gap: var(--space-md); }
         .nav__list { display: flex; align-items: center; gap: 4px; }
         .nav__link { font-size: 14px; font-weight: 500; color: var(--secondary); padding: 10px 14px; border-radius: var(--radius); transition: color var(--transition-fast), background var(--transition-fast); white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
@@ -144,9 +143,29 @@
            HERO
            ============================================ */
         .hero { position: relative; overflow: hidden; padding-top: var(--space-xl); padding-bottom: var(--space-xl); background: var(--surface); }
-        .hero__bg-accent { position: absolute; top: 0; right: 0; width: 60%; height: 100%; pointer-events: none; opacity: 0.04; }
-        .hero__bg-accent line { stroke: var(--primary); stroke-width: 2; }
-        .hero__inner { position: relative; display: grid; grid-template-columns: 1fr; gap: var(--space-lg); max-width: 800px; }
+        .hero__bg-img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background: url('imágenes/Logo_sin-fondo_.webp') center right / contain no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero__banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('imágenes/banner.webp') center / cover no-repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero__inner { position: relative; display: grid; grid-template-columns: 1fr; gap: var(--space-lg); max-width: 800px; z-index: 1; }
         .hero__badge { display: inline-flex; align-items: center; gap: var(--space-xs); background: var(--primary); color: var(--on-primary); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 14px; border-radius: var(--radius-full); width: fit-content; }
         .hero__badge::before { content: ''; width: 6px; height: 6px; background: var(--on-primary); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -265,8 +284,7 @@
         .footer { background: var(--inverse-surface); color: var(--inverse-on-surface); padding-top: var(--space-lg); padding-bottom: var(--space-lg); }
         .footer__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); }
         .footer__logo { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--inverse-on-surface); display: flex; align-items: center; gap: 8px; }
-        .footer__logo-icon { width: 24px; height: 24px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
-        .footer__logo-icon svg { width: 12px; height: 12px; fill: var(--on-primary); }
+        .footer__logo-img { width: 24px; height: 24px; object-fit: contain; }
         .footer__links { display: flex; flex-wrap: wrap; gap: var(--space-md); }
         .footer__link { font-size: 13px; color: rgba(241, 241, 241, 0.6); transition: color var(--transition-fast); min-height: 44px; display: inline-flex; align-items: center; }
         .footer__link:hover { color: var(--inverse-on-surface); }
@@ -309,6 +327,8 @@
             .section-header { text-align: left; }
             .industries__grid { justify-content: flex-start; }
             .problem__card-cta { position: static; margin-top: var(--space-md); width: fit-content; }
+            .hero__bg-img { display: none; }
+            .hero__banner { opacity: 0.06; }
         }
         @media (max-width: 480px) {
             .display-xl { font-size: 40px; }
@@ -328,11 +348,13 @@
     <header class="header" role="banner">
         <div class="container header__inner">
             <a href="#" class="header__logo" aria-label="Websprint - Inicio">
-                <span class="header__logo-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
-                    </svg>
-                </span>
+                <img src="imágenes/Logo-en-movimiento.webp" 
+                     alt="Logo Websprint" 
+                     width="32" 
+                     height="32" 
+                     loading="eager" 
+                     decoding="async"
+                     class="header__logo-img">
                 Websprint
             </a>
 
@@ -360,13 +382,8 @@
     <main id="main-content">
 
         <section class="hero" aria-labelledby="hero-title">
-            <svg class="hero__bg-accent" aria-hidden="true" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-                <line x1="600" y1="0" x2="0" y2="400"/>
-                <line x1="600" y1="80" x2="100" y2="400"/>
-                <line x1="600" y1="160" x2="200" y2="400"/>
-                <line x1="600" y1="240" x2="300" y2="400"/>
-                <line x1="600" y1="320" x2="400" y2="400"/>
-            </svg>
+            <div class="hero__bg-img" aria-hidden="true"></div>
+            <div class="hero__banner" aria-hidden="true"></div>
 
             <div class="container hero__inner">
                 <span class="hero__badge" aria-label="Entrega en 48 horas">Entrega en 48h</span>
@@ -696,11 +713,13 @@
     <footer class="footer" role="contentinfo">
         <div class="container footer__inner">
             <div class="footer__logo">
-                <span class="footer__logo-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
-                    </svg>
-                </span>
+                <img src="imágenes/Logo-en-movimiento.webp" 
+                     alt="Logo Websprint" 
+                     width="24" 
+                     height="24" 
+                     loading="lazy"
+                     decoding="async"
+                     class="footer__logo-img">
                 Websprint
             </div>
 
