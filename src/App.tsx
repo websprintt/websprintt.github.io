@@ -3,28 +3,60 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
-  Menu, X, Send, ChevronRight, AlertTriangle, Layers, Smartphone, 
-  Zap, Search, Globe, Lock, Users, Check, MessageSquare, Paintbrush, 
-  Key, Droplet, Home, Truck, Palette 
+  Menu, X, Zap, Smartphone, Search, Globe, Lock, Layers, 
+  MessageSquare, Paintbrush, ChevronRight, Check, AlertTriangle, 
+  Clock, Rocket, Shield, ArrowRight, Star
 } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useSpring, useInView } from 'motion/react';
+
+// --- Components ---
+
+const SectionHeader = ({ tag, title, description, light = false }: { tag: string, title: string | React.ReactNode, description: string, light?: boolean }) => (
+  <div className="max-w-3xl mb-20">
+    <motion.span 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className={`inline-flex items-center gap-2 font-display text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${light ? 'text-white/60' : 'text-[var(--primary)]'}`}
+    >
+      <span className={`w-8 h-[1px] ${light ? 'bg-white/20' : 'bg-[var(--primary)]/30'}`}></span>
+      {tag}
+    </motion.span>
+    <motion.h2 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.1 }}
+      className={`headline-lg mb-6 ${light ? 'text-white' : 'text-[var(--on-surface)]'}`}
+    >
+      {title}
+    </motion.h2>
+    <motion.p 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.2 }}
+      className={`text-lg md:text-xl leading-relaxed ${light ? 'text-white/60' : 'text-[var(--secondary)]'}`}
+    >
+      {description}
+    </motion.p>
+  </div>
+);
+
+// --- Main App ---
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   const logoUrl = "https://raw.githubusercontent.com/websprintt/websprintt.github.io/e7fc2c370ab1c9abfa7933ea04e7f4683121fb86/im%C3%A1genes/Logo_sin-fondo_.webp";
   
-  // Ofuscación básica para evitar scraping de bots
-  const encodedPhone = "MzQ3NDIwOTA5OTE="; // Base64 de 34742090991
+  // Security: Phone Obfuscation
+  const encodedPhone = "MzQ3NDIwOTA5OTE="; // Base64 for 34742090991
   const getWaLink = (message?: string) => {
     const phone = atob(encodedPhone);
     const base = `https://wa.me/${phone}`;
@@ -33,85 +65,80 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const industries = [
-    { icon: Zap, label: "Electricistas" },
-    { icon: Key, label: "Cerrajeros" },
-    { icon: Droplet, label: "Fontaneros" },
-    { icon: Home, label: "Reformas" },
-    { icon: Truck, label: "Mudanzas" },
-    { icon: Paintbrush, label: "Pintores" },
-    { icon: Palette, label: "Arquitectos" },
-    { icon: Smartphone, label: "Comercios" }
+  const menuItems = [
+    { label: "Servicios", href: "#servicios" },
+    { label: "Método", href: "#metodo" },
+    { label: "Precios", href: "#precios" },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Scroll Progress Bar */}
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-1 bg-[var(--primary)] z-[100] origin-left"
-        style={{ scaleX }}
-      />
-      {/* Skip Link */}
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2 focus:z-[1000] focus:bg-[var(--primary)] focus:text-white focus:px-6 focus:py-3 focus:rounded-lg focus:font-bold">
-        Saltar al contenido principal
-      </a>
+    <div className="relative min-h-screen bg-white">
+      {/* ProgressBar */}
+      <motion.div className="fixed top-0 left-0 right-0 h-[3px] bg-[var(--primary)] z-[1000] origin-left" style={{ scaleX }} />
 
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border-b border-[var(--surface-container-high)] py-2 shadow-md' : 'bg-transparent py-4'}`}>
-        <div className={`container px-6 sm:px-8 flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-16' : 'h-40'}`}>
-          <a href="#" className="flex items-center transition-transform hover:scale-105">
-            <img src={logoUrl} alt="Websprint Logo" className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-12' : 'h-32'}`} />
-          </a>
-
-          {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-6">
-            <ul className="flex items-center gap-1">
-              <li><a href="#servicios" className="nav-link">Servicios</a></li>
-              <li><a href="#proceso" className="nav-link">Proceso</a></li>
-              <li><a href="#precios" className="nav-link">Precios</a></li>
-            </ul>
-            <a href={getWaLink("Hola Websprint! Vengo de vuestra web y me gustaría recibir información.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary !h-11 !px-5 !text-xs !tracking-widest uppercase">
-              Contacto
-            </a>
-          </nav>
-          {/* ... resto del header ... */}
-
-          {/* Mobile Toggle */}
-          <button 
-            className="md:hidden w-12 h-12 flex items-center justify-center rounded-lg text-[var(--on-surface)]"
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={isMenuOpen}
+      <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${scrolled ? 'py-4' : 'py-8'}`}>
+        <div className="container">
+          <motion.div 
+            className={`flex items-center justify-between px-6 py-3 rounded-full transition-all duration-500 ${scrolled ? 'glass-card' : 'bg-transparent'}`}
           >
-            {isMenuOpen ? <X /> : <Menu />}
-          </button>
+            <a href="#" className="flex items-center group">
+              <motion.img 
+                src={logoUrl} 
+                alt="Websprint" 
+                className={`w-auto object-contain transition-all duration-500 ${scrolled ? 'h-8' : 'h-12 md:h-16 brightness-0 invert'}`}
+              />
+            </a>
+
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-8">
+              {menuItems.map((item) => (
+                <a key={item.label} href={item.href} className={`nav-link ${scrolled ? '' : 'text-white/80 hover:text-white'}`}>{item.label}</a>
+              ))}
+              <a 
+                href={getWaLink("Hola Websprint! Quiero información para mi proyecto.")} 
+                target="_blank" rel="noopener noreferrer"
+                className="btn btn-primary btn-shine px-6 py-2.5 text-xs uppercase tracking-widest"
+              >
+                Contacto
+              </a>
+            </nav>
+
+            {/* Mobile Toggle */}
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`md:hidden w-10 h-10 flex items-center justify-center rounded-full transition-colors ${scrolled ? 'bg-[var(--surface-container)]' : 'bg-white/10 text-white'}`}
+            >
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </motion.div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-full left-0 right-0 bg-white border-b border-[var(--surface-container-high)] p-6 shadow-xl md:hidden"
+              className="absolute top-24 left-6 right-6 p-8 glass-card rounded-[32px] md:hidden z-[110]"
             >
-              <ul className="flex flex-col gap-2">
-                <li><a href="#servicios" onClick={() => setIsMenuOpen(false)} className="nav-link w-full">Servicios</a></li>
-                <li><a href="#proceso" onClick={() => setIsMenuOpen(false)} className="nav-link w-full">Proceso</a></li>
-                <li><a href="#precios" onClick={() => setIsMenuOpen(false)} className="nav-link w-full">Precios</a></li>
-              </ul>
-              <div className="mt-6 pt-6 border-t border-[var(--surface-container-high)]">
-                <a href={getWaLink("Hola! Me gustaría informarme sobre vuestros servicios desde el menú móvil.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
-                  Contacto por WhatsApp
+              <div className="flex flex-col gap-6">
+                {menuItems.map((item) => (
+                  <a key={item.label} href={item.href} onClick={() => setIsMenuOpen(false)} className="text-2xl font-display font-bold">{item.label}</a>
+                ))}
+                <a 
+                  href={getWaLink("Hola! Vengo desde el menú móvil.")} 
+                  target="_blank" rel="noopener noreferrer"
+                  className="btn btn-primary h-14 w-full text-lg mt-4"
+                >
+                  Hablar por WhatsApp
                 </a>
               </div>
             </motion.div>
@@ -119,521 +146,535 @@ export default function App() {
         </AnimatePresence>
       </header>
 
-      <main id="main-content">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden pt-32 pb-20 md:pt-48 md:pb-32 bg-white">
-          {/* New Dynamic Background */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-            <div className="absolute inset-0 grid-pattern opacity-30 mask-radial"></div>
-            
-            {/* Thick Transversal Blurred Lines (Speed Elements) - More visible and dynamic */}
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-              <motion.div 
-                animate={{ 
-                  x: [-20, 20],
-                  opacity: [0.08, 0.12, 0.08]
-                }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-0 -rotate-12 scale-150"
-              >
-                <div className="absolute top-0 left-1/4 w-48 h-full bg-[var(--primary)] blur-[100px]"></div>
-                <div className="absolute top-0 left-1/2 w-96 h-full bg-[var(--primary)] blur-[120px]"></div>
-                <div className="absolute top-0 left-3/4 w-40 h-full bg-[var(--primary)] blur-[80px]"></div>
-              </motion.div>
-            </div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-black text-white">
+        {/* Full Image Background with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://raw.githubusercontent.com/websprintt/websprintt.github.io/4b6367f5e69885cba8d0f526a4fab056a2199d5f/im%C3%A1genes/banner-ok.webp" 
+            alt="Web Sprint Banner" 
+            className="w-full h-full object-cover object-right opacity-70 transition-opacity duration-1000"
+          />
+          {/* Fading to black from left to right */}
+          <div className="absolute inset-y-0 left-0 w-full md:w-[60%] bg-gradient-to-r from-black via-black/80 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 grid-pattern opacity-5 mask-radial"></div>
+        </div>
 
-            {/* Abstract Decorative Shapes */}
-            <motion.div 
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.05, 1],
-              }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] border border-[var(--primary)]/5 rounded-[30%_70%_70%_30%/30%_30%_70%_70%] opacity-40"
-            />
-            
-            <motion.div 
-              animate={{ 
-                rotate: -360,
-                scale: [1, 1.1, 1],
-              }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] border border-[var(--primary)]/10 rounded-[50%_50%_20%_80%/25%_80%_20%_75%] opacity-30"
-            />
-
-            {/* Glowing Accent */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full"></div>
-          </div>
-          
-          <div className="container relative z-10 max-w-4xl">
-            {/* Floating Elements */}
-            <div className="absolute -top-10 -right-10 md:right-0 opacity-10 pointer-events-none">
-              <motion.div
-                animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Layers size={120} className="text-[var(--primary)]" />
-              </motion.div>
-            </div>
-
+        <div className="container relative z-10 pt-20">
+          <div className="max-w-4xl">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-8"
             >
-              <span className="inline-flex items-center gap-2 bg-[var(--primary)] text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-full mb-6 shadow-[0_4px_12px_rgba(252,14,48,0.2)]">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                Servicio Express: 48h
-              </span>
+              <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Ejecución en 48 Horas Garantizada</span>
             </motion.div>
 
             <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="font-display text-[2.75rem] sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6"
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="headline-xl mb-8 text-white"
             >
-              Consigue más clientes con una web en <span className="text-[var(--primary)]">48 horas</span>
+              Tu negocio en línea <br />
+              <span className="text-[var(--primary)] italic relative inline-block">
+                antes de 48h.
+                <motion.span 
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="absolute bottom-4 left-0 h-2 bg-[var(--primary)]/20 -z-10"
+                />
+              </span>
             </motion.h1>
 
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-lg md:text-xl text-[var(--secondary)] leading-relaxed mb-10 max-w-2xl px-2 sm:px-0"
+              transition={{ delay: 0.3 }}
+              className="text-xl md:text-2xl text-white/70 max-w-2xl mb-12 leading-relaxed"
             >
-              Creamos páginas web simples, rápidas y optimizadas para que tu negocio empiece a captar clientes desde el primer minuto. Sin fricción, sin esperas.
+              Diseñamos, programamos y lanzamos tu web de alto rendimiento. Sin esperas infinitas, sin procesos lentos. Tu motor de ventas, hoy.
             </motion.p>
 
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0"
+              transition={{ delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center gap-6"
             >
-              <a href={getWaLink("¡Hola! Quiero activar mi proyecto web de 48h ahora mismo. ¿Cómo empezamos?")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine group h-16 sm:h-14 !px-8 text-lg w-full sm:w-auto">
-                Activar mi proyecto ahora
-                <Zap className="transition-transform group-hover:scale-125" size={20} fill="currentColor" />
+              <a 
+                href={getWaLink("¡Hola! Quiero activar mi proyecto ahora.")} 
+                target="_blank" rel="noopener noreferrer"
+                className="btn btn-primary btn-shine h-16 px-10 text-lg group w-full sm:w-auto"
+              >
+                Impulsar mi negocio ahora
+                <Zap size={20} className="ml-2 group-hover:scale-125 transition-transform" fill="currentColor" />
               </a>
-              <a href="#proceso" className="btn btn-outline h-16 sm:h-14 !px-8 text-lg w-full sm:w-auto">
-                Ver método
-              </a>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Industry Marquee */}
-        <div className="bg-white py-6 border-b border-[var(--surface-container-high)] overflow-hidden relative">
-          <div className="flex overflow-hidden">
-            <motion.div 
-              animate={{ x: [0, -1000] }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap px-4"
-            >
-              {[...industries, ...industries, ...industries].map((item, index) => (
-                <div key={index} className="flex items-center gap-3 text-[var(--secondary)] font-bold text-sm uppercase tracking-widest grayscale hover:grayscale-0 transition-all cursor-default">
-                  <item.icon size={20} className="text-[var(--primary)]" />
-                  {item.label}
-                  <span className="ml-8 text-[var(--surface-container-highest)]">/</span>
+              <div className="flex -space-x-3 items-center">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[var(--surface-container)] flex items-center justify-center overflow-hidden">
+                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                  </div>
+                ))}
+                <div className="pl-6">
+                  <div className="flex gap-1 mb-0.5">
+                    {[1,2,3,4,5].map(i => <Star key={i} size={10} fill="currentColor" className="text-orange-400" />)}
+                  </div>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--secondary)]">+50 clientes activos</p>
                 </div>
-              ))}
+              </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Problem Section */}
-        <section className="section bg-white border-y border-[var(--surface-container-high)]">
-          <div className="container px-6 sm:px-8 grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex items-center gap-2 text-[var(--error)] mb-6">
-                <AlertTriangle size={20} />
-                <span className="label-bold">Urgencia Digital</span>
-              </div>
-              <h2 className="headline-lg mb-8">
-                Cada hora que pasas offline es un <span className="text-[var(--primary)]">cliente perdido.</span>
-              </h2>
-              <p className="body-lg text-[var(--secondary)] mb-8">
-                En el sector servicios, la velocidad lo es todo. Si un cliente busca "electricista" o "reformas" ahora mismo y no apareces, llamará al siguiente en la lista. 
-              </p>
-              <div className="grid grid-cols-2 gap-6 p-6 bg-[var(--surface-container-low)] rounded-2xl border border-[var(--surface-container-high)]">
-                <div>
-                  <div className="text-3xl font-bold text-[var(--primary)] mb-1">94%</div>
-                  <p className="text-xs text-[var(--secondary)] uppercase tracking-wider font-bold">Confían en webs profesionales</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[var(--primary)] mb-1">0.05s</div>
-                  <p className="text-xs text-[var(--secondary)] uppercase tracking-wider font-bold">Tiempo en crear una impresión</p>
-                </div>
-              </div>
-            </motion.div>
+        {/* Scroll Indicator */}
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30"
+        >
+          <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-[var(--on-surface)] to-transparent"></div>
+        </motion.div>
+      </section>
 
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-[40px] p-8 md:p-12 relative overflow-hidden border border-[var(--surface-container-high)] shadow-sm group"
-            >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--primary)] blur-[120px] opacity-10 -mr-32 -mt-32 group-hover:opacity-20 transition-opacity"></div>
-              
-              <div className="flex items-center gap-4 mb-10 pb-8 border-b border-[var(--surface-container-high)]">
-                <div className="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center">
-                  <X className="text-white" size={20} />
-                </div>
-                <span className="text-[var(--on-surface)] font-bold tracking-widest uppercase text-xs">Lo que te frena</span>
-              </div>
-
-              <ul className="space-y-8 mb-12">
+      {/* Trust Ticker (Refined) */}
+      <section className="py-2 border-y border-[var(--surface-container-high)] bg-white overflow-hidden relative">
+        <div className="flex whitespace-nowrap overflow-hidden">
+          <motion.div 
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            className="flex items-center gap-16 pr-16"
+          >
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex items-center gap-16">
                 {[
-                  "Tu competencia se lleva el 80% de los presupuestos online.",
-                  "Das una imagen 'amateur' sin una web optimizada.",
-                  "Pierdes tiempo explicando cosas que tu web ya debería decir."
-                ].map((item, index) => (
-                  <li key={index} className="flex gap-4 items-start">
-                    <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--primary)] flex-shrink-0"></div>
-                    <span className="text-[var(--secondary)] font-medium leading-relaxed">{item}</span>
-                  </li>
+                  { text: "Electricistas", icon: Zap },
+                  { text: "Cerrajeros", icon: Lock },
+                  { text: "Fontaneros", icon: Smartphone },
+                  { text: "Reformas", icon: Layers },
+                  { text: "Autónomos", icon: Check },
+                  { text: "Mudanzas", icon: Rocket },
+                  { text: "Pintores", icon: Paintbrush },
+                  { text: "Climatización", icon: Shield }
+                ].map((item) => (
+                  <div key={item.text} className="flex items-center gap-3 grayscale opacity-30 hover:opacity-100 transition-opacity cursor-default group">
+                    <item.icon size={18} className="text-[var(--primary)]" />
+                    <span className="font-display font-black text-lg tracking-tighter uppercase">
+                      {item.text}
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
-              <a href={getWaLink("Hola, he visto vuestra web y me gustaría profesionalizar mi negocio para no perder más clientes.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full shadow-lg">
-                Cambiar esto hoy mismo
-              </a>
-            </motion.div>
-          </div>
-        </section>
+      {/* Bento Grid Features */}
+      <section id="servicios" className="section-padding bg-[var(--surface-container-low)]">
+        <div className="container">
+          <SectionHeader 
+            tag="Tecnología de Vanguardia"
+            title={<>No solo una web bonita. <br />Una <span className="text-[var(--primary)]">máquina de captar.</span></>}
+            description="Hemos optimizado cada línea de código para que tu web sea la más rápida de tu ciudad."
+          />
 
-        {/* Features Section (Bento Grid Style) */}
-        <section id="servicios" className="section bg-[var(--surface-container-low)]">
-          <div className="container px-6 sm:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Main Bento Item */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="max-w-3xl mb-20"
+              whileHover={{ y: -8 }}
+              className="md:col-span-2 bg-white p-10 md:p-14 rounded-[40px] border border-[var(--surface-container-high)] relative overflow-hidden group shadow-sm"
             >
-              <span className="text-[var(--primary)] font-bold tracking-[0.2em] uppercase text-[10px] mb-4 block">Potencial Tecnológico</span>
-              <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight">Arquitectura de alto rendimiento para tu negocio.</h2>
-              <p className="text-xl text-[var(--secondary)]">No solo es una web bonita. Es una herramienta de captación calibrada.</p>
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-[0_8px_24px_rgba(252,14,48,0.25)]">
+                    <Smartphone size={32} className="text-white" />
+                  </div>
+                  <div className="bg-green-50 px-4 py-2 rounded-xl border border-green-100">
+                    <p className="text-[10px] font-black uppercase text-green-600 tracking-wider">PageSpeed</p>
+                    <p className="text-xl font-display font-black text-green-700">99/100</p>
+                  </div>
+                </div>
+                <h3 className="headline-lg text-3xl md:text-5xl mb-6">Mobile First + Ultra Fast</h3>
+                <p className="text-lg text-[var(--secondary)] max-w-lg mb-10 leading-relaxed">
+                  El 90% de tus clientes potenciales buscarán tus servicios desde el móvil. Tu web está diseñada para ellos: carga instantánea en menos de 0.8s y llamada en 1 tap.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: "React 18 Engine", icon: Zap },
+                    { label: "Click-to-call direct", icon: Check },
+                    { label: "Maps Integration", icon: Globe },
+                    { label: "PWA Ready", icon: Smartphone }
+                  ].map(item => (
+                    <div key={item.label} className="flex items-center gap-3 text-sm font-bold text-[var(--on-surface)] bg-[var(--surface-container-low)] p-3 rounded-2xl">
+                      <item.icon size={16} className="text-[var(--primary)]" />
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Blurred background image */}
+              <div className="absolute inset-0 opacity-[0.03] grayscale pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+                <img 
+                  src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?q=80&w=1000&auto=format&fit=crop" 
+                  alt="Tech bg" 
+                  className="w-full h-full object-cover blur-[4px]"
+                />
+              </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4">
-              {/* Main Feature - Large */}
+            {/* Sidebar Bento Column */}
+            <div className="flex flex-col gap-6">
               <motion.div 
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -8 }}
+                className="bg-[var(--inverse-surface)] p-10 rounded-[40px] text-white overflow-hidden relative group"
+              >
+                <div className="relative z-10">
+                  <Rocket size={32} className="text-[var(--primary)] mb-6 group-hover:scale-110 transition-transform" />
+                  <h4 className="text-2xl font-bold mb-4">Ultra Velocidad</h4>
+                  <p className="text-white/60 text-sm leading-relaxed">Puntaje máximo en Google PageSpeed. Tu competencia no sabrá qué les pasó.</p>
+                </div>
+                {/* Blurred image */}
+                <div className="absolute inset-0 opacity-10 grayscale group-hover:scale-125 transition-transform duration-[2000ms]">
+                  <img 
+                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Space bg" 
+                    className="w-full h-full object-cover blur-[2px]"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div 
+                whileHover={{ y: -8 }}
+                className="bg-white p-10 rounded-[40px] border border-[var(--surface-container-high)] shadow-sm relative overflow-hidden group"
+              >
+                <div className="relative z-10">
+                  <Shield size={32} className="text-[var(--primary)] mb-6" />
+                  <h4 className="text-2xl font-bold mb-4">Seguridad SSL</h4>
+                  <p className="text-[var(--secondary)] text-sm leading-relaxed">Conexión cifrada y protección contra ataques. Tu negocio está a salvo.</p>
+                </div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/5 rounded-full blur-3xl group-hover:bg-[var(--primary)]/10 transition-colors"></div>
+                {/* Blurred image */}
+                <div className="absolute inset-0 opacity-[0.02] grayscale group-hover:scale-110 transition-transform duration-1000">
+                  <img 
+                    src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Shield bg" 
+                    className="w-full h-full object-cover blur-[8px]"
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Bottom Row Bento */}
+            {[
+              { icon: Search, title: "SEO Local", desc: "Aparece antes que nadie cuando busquen tu oficio.", img: "https://images.unsplash.com/photo-1432888622747-4eb9a8f2c20e?q=80&w=1000&auto=format&fit=crop" },
+              { icon: MessageSquare, title: "Botón WhatsApp", desc: "Conversión de visita a chat en un segundo.", img: "https://images.unsplash.com/photo-1611746872915-64382b5c76da?q=80&w=1000&auto=format&fit=crop" },
+              { icon: Layers, title: "Diseño único", desc: "Personalidad propia que genera autoridad.", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" }
+            ].map((card, i) => (
+              <motion.div 
+                key={i}
+                whileHover={{ y: -8 }}
+                className="bg-white p-10 rounded-[40px] border border-[var(--surface-container-high)] shadow-sm group hover:border-[var(--primary)] transition-colors relative overflow-hidden"
+              >
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-[var(--surface-container-low)] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[var(--primary)]/10 transition-colors">
+                    <card.icon size={24} className="text-[var(--primary)]" />
+                  </div>
+                  <h4 className="text-xl font-bold mb-3">{card.title}</h4>
+                  <p className="text-[var(--secondary)] text-sm leading-relaxed">{card.desc}</p>
+                </div>
+                {/* Blurred image highlight */}
+                <div className="absolute inset-0 opacity-[0.015] grayscale group-hover:scale-110 transition-transform duration-1000">
+                  <img 
+                    src={card.img} 
+                    alt="Section bg" 
+                    className="w-full h-full object-cover blur-[10px]"
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Methodology Section */}
+      <section id="metodo" className="section-padding bg-white overflow-hidden">
+        <div className="container relative">
+          <SectionHeader 
+            tag="El Método Websprint"
+            title={<>De 0 a 100 <br/>en <span className="text-[var(--primary)]">48 horas.</span></>}
+            description="Un proceso refinado para que tú te dediques a tu negocio mientras nosotros construimos tu presencia."
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Steps Connector */}
+            <div className="hidden md:block absolute top-[15%] left-0 right-0 h-[2px] bg-dashed bg-gray-100 -z-10"></div>
+            
+            {[
+              { 
+                step: "01", icon: MessageSquare, label: "Diagnóstico", 
+                desc: "Un análisis rápido de 10 minutos por WhatsApp para definir objetivos." 
+              },
+              { 
+                step: "02", icon: Paintbrush, label: "Desarrollo", 
+                desc: "Sprint de 48h donde diseñamos, redactamos y programamos." 
+              },
+              { 
+                step: "03", icon: Rocket, label: "Lanzamiento", 
+                desc: "Web publicada, SEO activo y tú recibiendo las primeras consultas." 
+              }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="md:col-span-6 lg:col-span-8 bg-white p-8 rounded-[32px] border border-[var(--surface-container-high)] flex flex-col justify-between group overflow-hidden relative shadow-sm"
+                transition={{ delay: i * 0.2 }}
+                className="relative group"
               >
-                <div className="relative z-10">
-                  <div className="w-14 h-14 bg-[var(--primary)] rounded-2xl flex items-center justify-center mb-6 shadow-[0_8px_16px_rgba(252,14,48,0.2)]">
-                    <Zap className="text-white" size={28} />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4">Conversión Inmediata con WhatsApp</h3>
-                  <p className="text-[var(--secondary)] max-w-md mb-8">Convertimos las visitas en chats reales en segundos. Sin formularios infinitos que nadie rellena.</p>
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-[var(--surface-container)] rounded-full group-hover:scale-110 transition-transform duration-500 opacity-50"></div>
-                <div className="mt-auto">
-                    <span className="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Máxima velocidad de respuesta</span>
-                </div>
-              </motion.div>
-
-              {/* Smaller features */}
-              <motion.div 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ delay: 0.1 }}
-                className="md:col-span-6 lg:col-span-4 bg-white p-8 rounded-[32px] border border-[var(--surface-container-high)] flex flex-col justify-between group overflow-hidden relative shadow-sm"
-              >
-                <div className="relative z-10">
-                  <div className="w-14 h-14 bg-[var(--primary)]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[var(--primary)] transition-colors">
-                    <Smartphone size={28} className="text-[var(--primary)] group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4">Diseño Móvil Primero</h3>
-                  <p className="text-[var(--secondary)] leading-relaxed">El 80% de tus clientes te buscarán desde su smartphone. Optimizamos cada píxel para esa experiencia.</p>
-                </div>
-                <div className="mt-8">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Adaptabilidad Total</span>
-                </div>
-              </motion.div>
-
-              {[
-                { icon: Search, title: "Google Ready", text: "Estructura SEO optimizada.", cols: "lg:col-span-3" },
-                { icon: Lock, title: "100% Segura", text: "SSL y seguridad máxima.", cols: "lg:col-span-3" },
-                { icon: Globe, title: "Fast Hosting", text: "Carga en milisegundos.", cols: "lg:col-span-3" },
-                { icon: Layers, title: "Diseño Único", text: "Nada de plantillas clónicas.", cols: "lg:col-span-3" }
-              ].map((feature, index) => (
-                <motion.div 
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + (index * 0.1) }}
-                  className={`${feature.cols} bg-white p-6 rounded-[24px] border border-[var(--surface-container-high)] hover:border-[var(--primary)] transition-colors group`}
-                >
-                  <feature.icon className="text-[var(--primary)] mb-4 transition-transform group-hover:scale-110" size={24} />
-                  <h4 className="font-bold text-sm mb-1">{feature.title}</h4>
-                  <p className="text-xs text-[var(--secondary)]">{feature.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Process Section */}
-        <section id="proceso" className="section bg-white overflow-hidden">
-          <div className="container px-6 sm:px-8 relative">
-            <div className="max-w-2xl mb-24">
-              <span className="text-[var(--primary)] font-bold tracking-[0.2em] uppercase text-[10px] mb-4 block">Hoja de ruta</span>
-              <h2 className="headline-lg mb-6">Tu negocio en línea, <span className="text-[var(--primary)]">paso a paso.</span></h2>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8 md:gap-16">
-              {[
-                { 
-                  step: "01", 
-                  title: "Briefing Relámpago", 
-                  text: "Hablamos 10 minutos por WhatsApp. Capturamos la esencia de tu negocio y servicios estrella.",
-                  icon: MessageSquare 
-                },
-                { 
-                  step: "02", 
-                  title: "Construcción", 
-                  text: "Trabajamos en paralelo: diseño, desarrollo y textos de venta en un sprint de máximo 48 horas.",
-                  icon: Paintbrush 
-                },
-                { 
-                  step: "03", 
-                  title: "Lanzamiento", 
-                  text: "Revisas la web, hacemos los ajustes finales y ¡BOOM! Estás captando clientes en Google.",
-                  icon: Zap 
-                }
-              ].map((item, index) => (
-                <motion.div 
-                  key={index}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.8 }}
-                  className="relative"
-                >
-                  <div className="text-[120px] font-display font-black text-[var(--surface-container)] absolute -top-20 -left-4 -z-10 select-none opacity-40">
+                <div className="w-20 h-20 bg-white border-2 border-[var(--surface-container-high)] rounded-[28px] flex items-center justify-center mb-8 relative z-10 group-hover:border-[var(--primary)] group-hover:shadow-2xl group-hover:shadow-[var(--primary-glow)] transition-all">
+                  <item.icon size={32} className="text-[var(--primary)]" />
+                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[var(--on-surface)] text-white text-[10px] font-black flex items-center justify-center border-4 border-white">
                     {item.step}
                   </div>
-                  <motion.div 
-                    whileHover={{ scale: 1.15, rotate: 5 }}
-                    className="w-16 h-16 bg-white border border-[var(--surface-container-high)] rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:border-[var(--primary)] group-hover:shadow-[0_0_20px_rgba(252,14,48,0.3)] transition-all duration-300"
-                  >
-                    <item.icon size={28} className="text-[var(--primary)]" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                  <p className="body-md text-[var(--secondary)] leading-relaxed">{item.text}</p>
-                  
-                  {index < 2 && (
-                    <div className="hidden md:block absolute top-7 left-full w-full h-[1px] bg-dashed bg-[var(--surface-container-high)] -z-20 ml-8"></div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{item.label}</h3>
+                <p className="text-[var(--secondary)] leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Pricing Section */}
-        <section id="precios" className="section bg-[var(--inverse-surface)] text-white overflow-hidden relative">
-          <div className="absolute inset-0 grid-pattern opacity-5 pointer-events-none" aria-hidden="true"></div>
-          <div className="container grid md:grid-cols-2 gap-12 items-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-[2px] bg-[var(--primary)]"></div>
-                <span className="text-[var(--primary)] font-bold tracking-widest uppercase text-xs">Inversión Inteligente</span>
-              </div>
-              <h2 className="headline-lg text-white mb-8 leading-tight">Recupera tu inversión <br/><span className="text-[var(--primary)]">en tiempo récord.</span></h2>
-              <p className="text-xl text-white/70 leading-relaxed mb-8">No es un gasto, es el motor de tu negocio. Una tarifa única, transparente y sin sorpresas finales.</p>
-              
-              <div className="flex items-center gap-6 text-white/50">
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-white tracking-tight">80€</span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Base</span>
+      {/* Comparison/Conflict Section */}
+      <section className="section-padding bg-[var(--on-surface)] text-white overflow-hidden">
+        <div className="container grid md:grid-cols-2 gap-20 items-center">
+          <motion.div
+             initial={{ opacity: 0, scale: 0.95 }}
+             whileInView={{ opacity: 1, scale: 1 }}
+             viewport={{ once: true }}
+          >
+            <div className="p-8 rounded-[40px] bg-white text-[var(--on-surface)] shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/10 rounded-full blur-3xl" />
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-[var(--primary)] flex items-center justify-center">
+                  <X size={16} className="text-white" />
                 </div>
-                <div className="w-[1px] h-8 bg-white/10"></div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-white tracking-tight">150€</span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Premium</span>
-                </div>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[var(--secondary)]">Situación Actual</span>
               </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-[40px] p-8 md:p-14 relative shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] group"
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-[var(--primary)]"></div>
-              
-              <div className="flex justify-between items-start mb-12">
-                <div>
-                  <h3 className="text-[var(--on-surface)] text-2xl font-bold mb-2">Proyecto Web Completo</h3>
-                  <p className="text-[var(--secondary)] text-sm">Todo incluido, listo para facturar.</p>
-                </div>
-                <Zap size={32} className="text-[var(--primary)] animate-pulse" />
-              </div>
-
-              <ul className="space-y-5 mb-12">
+              <ul className="space-y-6 mb-10">
                 {[
-                  "Diseño exclusivo y optimizado",
-                  "Entrega relámpago en 48 horas",
-                  "Dominio y Hosting (gestión total)",
-                  "Botones de acción directa (WhatsApp)",
-                  "Integración con Google Maps"
-                ].map((item, index) => (
-                  <li key={index} className="flex items-center gap-4 text-[var(--on-surface)] font-semibold">
-                    <div className="w-6 h-6 rounded-full bg-[var(--primary)]/10 flex items-center justify-center flex-shrink-0">
-                      <Check className="text-[var(--primary)]" size={14} strokeWidth={3} />
-                    </div>
-                    {item}
+                  "Tu negocio no existe en Google.",
+                  "Pierdes presupuestos cada día.",
+                  "Imagen antigua o inexistente.",
+                  "Dependes del 'boca a boca' limitado."
+                ].map((item) => (
+                  <li key={item} className="flex gap-4 items-start border-b border-gray-100 pb-4 last:border-0">
+                    <div className="mt-1 w-1.5 h-1.5 bg-gray-300 rounded-full flex-shrink-0" />
+                    <p className="text-sm font-medium leading-relaxed">{item}</p>
                   </li>
                 ))}
               </ul>
+              <motion.div 
+                whileHover={{ scale: 1.02 }}
+                className="bg-gray-100 p-6 rounded-3xl text-center"
+              >
+                <p className="text-xs uppercase font-black text-gray-400">Resultado</p>
+                <p className="text-2xl font-bold">Estancamiento</p>
+              </motion.div>
+            </div>
+          </motion.div>
 
-              <a href={getWaLink("¡Hola! Estoy interesado en contratar el servicio web de Websprint. ¿Qué pasos debo seguir?")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine w-full !h-16 text-lg group">
-                Reservar mi turno ahora
-                <ChevronRight className="transition-transform group-hover:translate-x-2" size={20} />
-              </a>
-              
-              <p className="text-center mt-6 text-xs text-[var(--secondary)] font-medium">
-                * Slots limitados por semana para garantizar la velocidad de entrega.
-              </p>
-            </motion.div>
+          <div>
+             <SectionHeader 
+                tag="El Gran Cambio"
+                title={<>No dejes <br/>dinero sobre <span className="text-[var(--primary)]">la mesa.</span></>}
+                description="Mientras tú lo piensas, un negocio con menos experiencia pero mejor web se está llevando a tus clientes. Es hora de recuperar tu territorio digital."
+                light
+             />
+             <div className="space-y-8 mb-12">
+                {[
+                  { label: "Atención al Cliente", val: "Automatizada vía WhatsApp" },
+                  { label: "Captación", val: "Activa 24/7/365" },
+                  { label: "Autoridad", val: "Líder en tu zona" }
+                ].map((row, i) => (
+                  <div key={i} className="flex justify-between items-center border-b border-white/10 pb-6">
+                    <span className="text-white/60 text-sm font-bold uppercase tracking-widest">{row.label}</span>
+                    <span className="text-white font-bold">{row.val}</span>
+                  </div>
+                ))}
+             </div>
+             <a href={getWaLink("¡Hola! He visto la comparativa y quiero el cambio.")} className="btn bg-white text-[var(--on-surface)] h-16 px-10 text-lg w-full sm:w-auto hover:bg-[var(--primary)] hover:text-white">
+                Solicitar mi web profesional
+                <ArrowRight size={20} className="ml-2" />
+             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Final CTA */}
-        <section className="section bg-white text-center relative overflow-hidden">
-          <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none mask-radial" aria-hidden="true"></div>
-          <div className="container max-w-3xl mx-auto relative z-10">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="headline-lg mb-8 leading-tight">¿Listos para llevar tu negocio <br/><span className="text-[var(--primary)] text-6xl md:text-8xl">al siguiente nivel?</span></h2>
-              <p className="body-lg text-[var(--secondary)] mb-12 max-w-xl mx-auto">La velocidad es una ventaja competitiva. Mientras lo piensas, tu competencia ya está pidiendo su presupuesto.</p>
+      {/* Pricing Table */}
+      <section id="precios" className="section-padding bg-white">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
+             <span className="text-[var(--primary)] font-black uppercase text-[10px] tracking-[0.2em]">Inversión Transparente</span>
+             <h2 className="headline-lg">Tarifas que se pagan solas.</h2>
+             <p className="text-[var(--secondary)]">Con solo 1 o 2 servicios nuevos recuperarás toda la inversión.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+             {/* Basic Plan */}
+             <motion.div 
+                whileHover={{ y: -10 }}
+                className="bg-[var(--surface-container-low)] p-10 rounded-[48px] border border-[var(--surface-container-high)] flex flex-col justify-between"
+             >
+                <div>
+                   <div className="flex justify-between items-center mb-8">
+                      <span className="text-xs font-black uppercase tracking-widest px-3 py-1 bg-white rounded-full">Base</span>
+                      <Zap size={24} className="text-gray-300" />
+                   </div>
+                   <div className="flex items-baseline gap-2 mb-10">
+                      <span className="text-5xl font-display font-black leading-none">80€</span>
+                   </div>
+                   <ul className="space-y-4 mb-10">
+                      {["Web corporativa 1 página", "Optimización Móvil", "Enlace WhatsApp", "SSL Gratuito"].map(item => (
+                        <li key={item} className="flex items-center gap-3 text-sm font-semibold opacity-60">
+                           <Check size={16} className="text-[var(--primary)]" strokeWidth={3} />
+                           {item}
+                        </li>
+                      ))}
+                   </ul>
+                </div>
+                <a href={getWaLink("Hola! Me interesa el plan Base de 80€.")} className="btn btn-outline h-14 w-full">Elegir Plan Base</a>
+             </motion.div>
+
+             {/* Premium Plan */}
+             <motion.div 
+                whileHover={{ y: -10 }}
+                className="bg-[var(--on-surface)] p-12 rounded-[48px] text-white flex flex-col justify-between relative shadow-2xl overflow-hidden"
+             >
+                <div className="absolute top-0 right-0 p-4">
+                   <div className="bg-[var(--primary)] text-white text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-lg">Recomendado</div>
+                </div>
+                <div>
+                   <div className="flex justify-between items-center mb-8">
+                      <span className="text-xs font-black uppercase tracking-widest px-3 py-1 bg-white/10 rounded-full">Pro Sprint</span>
+                      <Rocket size={24} className="text-[var(--primary)]" />
+                   </div>
+                   <div className="flex items-baseline gap-2 mb-10">
+                      <span className="text-7xl font-display font-black leading-none">150€</span>
+                   </div>
+                   <ul className="space-y-5 mb-10">
+                      {["Web Multipágina (Servicios)", "SEO Local Intensivo", "Acompañamiento 48h", "Integración completa Google", "Priority Support"].map(item => (
+                        <li key={item} className="flex items-center gap-4 text-sm font-bold">
+                           <div className="w-5 h-5 rounded-full bg-[var(--primary)] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--primary-glow)]">
+                              <Check size={12} className="text-white" strokeWidth={4} />
+                           </div>
+                           {item}
+                        </li>
+                      ))}
+                   </ul>
+                </div>
+                <a href={getWaLink("¡Hola! Quiero el plan PRO de 150€. Quiero volar.")} className="btn btn-primary btn-shine h-16 w-full text-lg">Activar Pro Sprint</a>
+             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section-padding bg-[var(--surface-container)] text-center relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-10 mask-radial" />
+        <div className="container relative z-10">
+           <motion.div
+             initial={{ opacity: 0, scale: 0.9 }}
+             whileInView={{ opacity: 1, scale: 1 }}
+             viewport={{ once: true }}
+             className="max-w-4xl mx-auto"
+           >
+              <h2 className="headline-xl mb-8">El futuro no espera. <br />Tu <span className="text-[var(--primary)]">web nueva</span> tampoco.</h2>
+              <p className="text-xl text-[var(--secondary)] mb-12 max-w-xl mx-auto">Únete a la liga de los negocios que dominan internet. Entrega garantizada antes del fin de semana.</p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <a href={getWaLink("¡Hola! Quiero hablar con un experto de Websprint sobre mi nueva página web.")} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-shine !h-16 !px-12 text-lg group">
-                  <Zap size={24} fill="currentColor" className="mr-3" />
-                  Hablar con un experto ahora
-                </a>
+                 <a href={getWaLink("¡Acepto el reto! Empecemos ya.")} className="btn btn-primary btn-shine h-20 px-14 text-xl group shadow-2xl">
+                    Agendar Inicio Proyecto
+                    <Rocket size={24} className="ml-3 group-hover:translate-x-2 transition-transform" />
+                 </a>
               </div>
-              
-              <div className="mt-12 flex items-center justify-center gap-8 opacity-40 grayscale">
-                <Smartphone size={24} />
-                <Globe size={24} />
-                <Zap size={24} />
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      </main>
+           </motion.div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-[var(--inverse-surface)] py-20 text-white/60">
+      <footer className="bg-white pt-24 pb-12 border-t border-gray-100">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 lg:col-span-1">
-              <a href="#" className="inline-block mb-6 transition-transform hover:scale-105">
-                <img src={logoUrl} alt="Websprint Logo" className="h-20 w-auto brightness-0 invert" />
-              </a>
-              <p className="text-sm leading-relaxed mb-6">
-                Ayudamos a pequeños negocios y autónomos a dar el salto digital con webs de alto rendimiento entregadas en tiempo récord.
-              </p>
-              <div className="flex gap-4">
-                {[MessageSquare, Globe, Zap].map((Icon, i) => (
-                  <motion.a 
-                    key={i}
-                    whileHover={{ y: -3, color: '#fc0e30' }}
-                    href="#" 
-                    className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10"
-                  >
-                    <Icon size={18} />
-                  </motion.a>
-                ))}
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+              <div className="md:col-span-1">
+                 <img src={logoUrl} alt="Websprint" className="h-12 w-auto mb-8" />
+                 <p className="text-sm text-[var(--secondary)] leading-relaxed mb-8">Construimos la presencia digital de los que hacen el trabajo duro. Calidad élite en tiempo récord.</p>
+                 <div className="flex gap-4">
+                    {[Zap, Globe, Shield].map((Icon, i) => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[var(--primary)] transition-colors cursor-pointer">
+                        <Icon size={18} />
+                      </div>
+                    ))}
+                 </div>
               </div>
-            </div>
+              
+              <div>
+                 <h5 className="font-bold uppercase tracking-widest text-xs mb-8">Directorio</h5>
+                 <ul className="space-y-4 text-sm font-semibold text-[var(--secondary)]">
+                    <li><a href="#servicios" className="hover:text-[var(--primary)] transition-colors">Servicios</a></li>
+                    <li><a href="#metodo" className="hover:text-[var(--primary)] transition-colors">Método 48h</a></li>
+                    <li><a href="#precios" className="hover:text-[var(--primary)] transition-colors">Precios</a></li>
+                    <li><a href="#" className="hover:text-[var(--primary)] transition-colors">Aviso Legal</a></li>
+                 </ul>
+              </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Servicios</h4>
-              <ul className="space-y-4 text-sm">
-                <li><a href="#servicios" className="hover:text-[var(--primary)] transition-colors">Diseño Web</a></li>
-                <li><a href="#servicios" className="hover:text-[var(--primary)] transition-colors">Optimización Móvil</a></li>
-                <li><a href="#servicios" className="hover:text-[var(--primary)] transition-colors">SEO para Negocios</a></li>
-                <li><a href="#proceso" className="hover:text-[var(--primary)] transition-colors">Hosting Express</a></li>
-              </ul>
-            </div>
+              <div>
+                 <h5 className="font-bold uppercase tracking-widest text-xs mb-8">Especialidades</h5>
+                 <ul className="space-y-4 text-sm font-semibold text-[var(--secondary)]">
+                    <li className="flex items-center gap-2"><Smartphone size={14} className="text-[var(--primary)]" /> Web Móvil</li>
+                    <li className="flex items-center gap-2"><Search size={14} className="text-[var(--primary)]" /> SEO Local</li>
+                    <li className="flex items-center gap-2"><Shield size={14} className="text-[var(--primary)]" /> Seguridad WCAG</li>
+                 </ul>
+              </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Compañía</h4>
-              <ul className="space-y-4 text-sm">
-                <li><a href="#proceso" className="hover:text-[var(--primary)] transition-colors">Método 48h</a></li>
-                <li><a href="#precios" className="hover:text-[var(--primary)] transition-colors">Precios</a></li>
-                <li><a href="#" className="hover:text-[var(--primary)] transition-colors">Aviso Legal</a></li>
-                <li><a href="#" className="hover:text-[var(--primary)] transition-colors">Privacidad</a></li>
-              </ul>
-            </div>
+              <div>
+                 <h5 className="font-bold uppercase tracking-widest text-xs mb-8">Unidad Móvil</h5>
+                 <div className="bg-[var(--surface-container-low)] p-6 rounded-3xl border border-[var(--surface-container-high)]">
+                    <p className="text-xs font-bold uppercase text-[var(--secondary)] tracking-widest mb-4">WhatsApp Directo</p>
+                    <a href={getWaLink()} className="text-xl font-bold hover:text-[var(--primary)] transition-colors">
+                      {atob(encodedPhone).replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4")}
+                    </a>
+                    <div className="flex items-center gap-2 mt-4 text-[10px] uppercase font-black text-green-500">
+                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                       En línea ahora
+                    </div>
+                 </div>
+              </div>
+           </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Contacto Directo</h4>
-              <ul className="space-y-4 text-sm">
-                <li className="flex items-center gap-3">
-                  <MessageSquare size={16} className="text-[var(--primary)]" />
-                  <a href={getWaLink("Hola! Contacto desde el pie de página de la web. ¿Me podéis informar?")} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                    {atob(encodedPhone).replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4")}
-                  </a>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Zap size={16} className="text-[var(--primary)]" />
-                  <span>Atención 24/7 vía WhatsApp</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Globe size={16} className="text-[var(--primary)]" />
-                  <span>Servicio en toda España</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p className="text-xs">© 2026 Websprint. Todos los derechos reservados. Diseño y ejecución a máxima velocidad.</p>
-            <div className="flex gap-6 text-[10px] uppercase font-bold tracking-widest opacity-40">
-              <span>Hecho con <Zap size={10} className="inline mb-0.5" fill="currentColor"/> en 48h</span>
-            </div>
-          </div>
+           <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-12 border-t border-gray-50 text-[var(--secondary)] text-[10px] font-bold uppercase tracking-[0.2em]">
+              <p>© 2026 Websprint Digital Agency. Reservados todos los derechos.</p>
+              <div className="flex gap-8">
+                 <span className="flex items-center gap-2"><Clock size={12} /> Cero Retrasos</span>
+                 <span className="flex items-center gap-2 text-[var(--primary)]"><Zap size={12} fill="currentColor" /> Potenciado por IA</span>
+              </div>
+           </div>
         </div>
       </footer>
 
-      {/* Floating WhatsApp */}
-      <a 
-        href={getWaLink("Hola! Tengo una duda sobre vuestros servicios de diseño web express.")} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl z-[100] hover:scale-110 transition-transform active:scale-95"
-        aria-label="Contactar por WhatsApp"
+      {/* WhatsApp Button */}
+      <motion.a 
+         href={getWaLink("Hola! Necesito ayuda para una web nueva.")}
+         target="_blank" rel="noopener noreferrer"
+         whileHover={{ scale: 1.1 }}
+         whileTap={{ scale: 0.9 }}
+         className="fixed bottom-10 right-10 w-16 h-16 bg-[#25D366] text-white rounded-2xl shadow-[0_20px_50px_rgba(37,211,102,0.4)] flex items-center justify-center z-[500] group"
       >
-        <MessageSquare size={28} fill="currentColor" />
-      </a>
+         <MessageSquare size={32} fill="currentColor" className="group-hover:rotate-12 transition-transform" />
+      </motion.a>
     </div>
   );
 }
